@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\dureo\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\dureo\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_.19.00" t="ExcludeRecursive" />
+    <e p="E:\liveavatar-backend" t="IncludeFlat">
+      <e p="heygen-avatar-demo\node_modules\@types" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\dotenv" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\esbuild" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\express" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\fdir" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\nanoid" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\picocolors" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\picomatch" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\postcss" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\rollup" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\source-map-js" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\tinyglobby" t="IncludeRecursive" />
+      <e p="heygen-avatar-demo\node_modules\vite" t="IncludeRecursive" />
+      <e p="node_modules\@heygen\liveavatar-web-sdk" t="IncludeRecursive" />
+      <e p="node_modules\@livekit\mutex" t="IncludeRecursive" />
+      <e p="node_modules\@livekit\protocol" t="IncludeRecursive" />
+      <e p="node_modules\@types" t="IncludeRecursive" />
+      <e p="node_modules\axios" t="IncludeRecursive" />
+      <e p="node_modules\cors" t="IncludeRecursive" />
+      <e p="node_modules\express" t="IncludeRecursive" />
+      <e p="node_modules\form-data" t="IncludeRecursive" />
+      <e p="node_modules\hasown" t="IncludeRecursive" />
+      <e p="node_modules\livekit-client" t="IncludeRecursive" />
+      <e p="node_modules\loglevel" t="IncludeRecursive" />
+      <e p="node_modules\rxjs" t="IncludeRecursive" />
+      <e p="node_modules\sdp" t="IncludeRecursive" />
+      <e p="node_modules\ts-debounce" t="IncludeRecursive" />
+      <e p="node_modules\tslib" t="IncludeRecursive" />
+      <e p="node_modules\typed-emitter" t="IncludeRecursive" />
+      <e p="node_modules\webrtc-adapter" t="IncludeRecursive" />
+      <e p="node_modules\webrtc-issue-detector" t="IncludeRecursive" />
+    </e>
+  </component>
+</project>

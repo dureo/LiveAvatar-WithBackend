@@ -1,0 +1,18 @@
+{
+  "name": "liveavatar-backend",
+  "version": "1.0.0",
+  "description": "Json to set up live avatar backend",
+  "license": "ISC",
+  "author": "Eduardo Amengual",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@heygen/liveavatar-web-sdk": "^0.0.10",
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "express": "^5.2.1"
+  }
+}

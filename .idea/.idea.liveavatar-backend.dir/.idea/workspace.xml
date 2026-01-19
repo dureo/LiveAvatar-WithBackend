@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b28dfaa7-87d1-410c-b7f7-0d8866660cc1" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$USER_HOME$/AppData/Local/Temp/fz3temp-2/index 2.html" />
+        <option value="$USER_HOME$/AppData/Local/Temp/fz3temp-2/index.html" />
+        <option value="$PROJECT_DIR$/index.js" />
+        <option value="$PROJECT_DIR$/heygen-avatar-demo/index.html" />
+        <option value="$PROJECT_DIR$/heygen-avatar-demo/server.js" />
+        <option value="$PROJECT_DIR$/heygen-avatar-demo/src/main.js" />
+        <option value="$PROJECT_DIR$/heygen-avatar-demo/server.cjs" />
+        <option value="$PROJECT_DIR$/heygen-avatar-demo/.env" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="36YwaKHhuEhIvONS96UvA6SsKnn" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="Rider.SolutionExplorerActivator" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="WindowStateProjectService">
+    <state x="615" y="185" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1765201536062">
+      <screen x="0" y="0" width="1920" height="1032" />
+    </state>
+    <state x="615" y="185" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1032/1920.0.1536.816/-1080.-441.1080.1872@0.0.1920.1032" timestamp="1765201536062" />
+  </component>
+</project>

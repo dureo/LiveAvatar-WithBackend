@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>heygen-avatar-demo</title>
+  </head>
+  <body>
+  <main class="container" style="text-align: center;">
+    <h1>Live Avatar Demo (HeyGen)</h1>
+
+    <!-- Sección de video del avatar -->
+    <video id="avatarVideo" autoplay playsinline style="max-width: 100%;"></video>
+    <audio id="avatarAudio" autoplay></audio>
+
+
+    <!-- Sección de controles -->
+    <div id="controls">
+      <!-- Botones de sesión -->
+      <button id="startSession">Start Session</button>
+      <button id="endSession" disabled>End session</button>
+      <br><br>
+      <!-- Entrada de texto y botón de hablar -->
+     <!-- <input type="text" id="userInput" placeholder="Escribe algo para hablar con el avatar..." />
+      <button id="speakButton">Hablar</button>-->
+    </div>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+  </body>
+
+</html>
