@@ -8,17 +8,14 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "*";
-const EXTRA_ORIGINS = (process.env.ALLOWED_ORIGINS || "")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean);
-const allowedOrigins = new Set([
-    ...(FRONTEND_ORIGIN === "*" ? [] : [FRONTEND_ORIGIN]),
-    "https://edamgames.com",
-    "http://localhost:5173",
-    "http://localhost:3000",
-    ...EXTRA_ORIGINS,
-]);
+const allowedOrigins = new Set(
+    [
+        FRONTEND_ORIGIN === "*" ? null : FRONTEND_ORIGIN,
+        "https://edamgames.com",
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ].filter(Boolean)
+);
 
 const corsOptions = {
     origin(origin, callback) {
@@ -32,15 +29,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
-
-app.use((req, res, next) => {
-    if (req.method !== "OPTIONS") return next();
-    res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    return res.sendStatus(204);
-});
+app.options("*", cors(corsOptions));
 
 const LIVEAVATAR_API = "https://api.liveavatar.com/v1";
 const LIVEAVATAR_API_KEY = process.env.LIVEAVATAR_API_KEY;

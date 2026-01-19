@@ -96,19 +96,6 @@ function attachAgentResponseDebug(r) {
             const evt = JSON.parse(text);
             console.log("[agent-response]", evt);
 
-            if (evt?.event_type === "avatar.transcription") {
-                setStatus("Transcripción recibida.");
-            }
-
-            if (evt?.event_type === "user.speak_started") {
-                setStatus("Escuchando…");
-            }
-
-            if (evt?.event_type === "user.speak_ended") {
-                setStatus("Procesando…");
-                sendAgentControl({ event_type: "avatar.stop_listening" });
-            }
-
             if (evt?.event_type === "avatar.speak_started") {
                 setStatus("Avatar hablando…");
             }
