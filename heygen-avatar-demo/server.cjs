@@ -36,7 +36,7 @@ const LIVEAVATAR_API_KEY = process.env.LIVEAVATAR_API_KEY;
 
 app.get("/api/health", (req, res) => res.json({ ok: true }));
 
-app.post("/api/start-session", async (req, res) => {
+app.post("/api/session-token", async (req, res) => {
     try {
         if (!LIVEAVATAR_API_KEY) {
             return res.status(500).json({ error: "Falta LIVEAVATAR_API_KEY en .env" });
@@ -87,34 +87,8 @@ app.post("/api/start-session", async (req, res) => {
             });
         }
 
-        // 2) Start session (LiveKit creds)
-        const startResp = await fetch(`${LIVEAVATAR_API}/sessions/start`, {
-            method: "POST",
-            headers: {
-                accept: "application/json",
-                authorization: `Bearer ${session_token}`,
-            },
-        });
-
-        const startJson = await startResp.json().catch(() => null);
-
-        if (!startResp.ok) {
-            console.error("LiveAvatar start error:", startResp.status, startJson);
-            return res.status(startResp.status).json({ error: "No se pudo iniciar sesión", details: startJson });
-        }
-
-        const livekit_url = startJson?.data?.livekit_url;
-        const livekit_client_token = startJson?.data?.livekit_client_token;
-
-        if (!livekit_url || !livekit_client_token) {
-            return res.status(500).json({
-                error: "Respuesta inesperada de LiveAvatar (faltan credenciales LiveKit)",
-                raw: startJson,
-            });
-        }
-
-        // IMPORTANTE: devolvemos session_id para que el frontend pueda pedir transcript al backend
-        return res.json({ livekit_url, livekit_client_token, session_id });
+        // IMPORTANTE: devolvemos session_id para transcript si hace falta.
+        return res.json({ session_token, session_id });
     } catch (e) {
         console.error("start-session error:", e);
         return res.status(500).json({ error: "Error interno", details: String(e) });
