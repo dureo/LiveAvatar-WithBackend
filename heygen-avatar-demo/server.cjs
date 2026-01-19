@@ -29,7 +29,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options("/*", cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 const LIVEAVATAR_API = "https://api.liveavatar.com/v1";
 const LIVEAVATAR_API_KEY = process.env.LIVEAVATAR_API_KEY;
