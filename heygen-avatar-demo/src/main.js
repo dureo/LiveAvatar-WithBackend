@@ -1,4 +1,4 @@
-import { Room, createLocalAudioTrack } from "livekit-client";
+import { AgentEventsEnum, LiveAvatarSession, SessionEvent } from "@heygen/liveavatar-web-sdk";
 
 /**
  * ENV esperadas (Vite):
@@ -16,20 +16,14 @@ const CONTEXT_ID = import.meta.env.VITE_CONTEXT_ID;
 const LANGUAGE = import.meta.env.VITE_LANGUAGE || "es";
 
 const videoElement = document.getElementById("avatarVideo");
-const audioElement = document.getElementById("avatarAudio");
 const startButton = document.getElementById("startSession");
 const endButton = document.getElementById("endSession");
 const speakButton = document.getElementById("speakButton");
 const userInput = document.getElementById("userInput");
 const statusEl = document.getElementById("status");
 
-let room = null;
-let micTrack = null;
+let session = null;
 let listeningActive = false;
-
-let audioAttached = false;
-let videoAttached = false;
-const PREFERRED_AUDIO_PARTICIPANT = "heygen";
 
 function setStatus(message) {
     if (statusEl) statusEl.textContent = message;
@@ -38,14 +32,10 @@ function setStatus(message) {
 function cleanupUI() {
     try {
         videoElement.srcObject = null;
-        audioElement.srcObject = null;
     } catch {}
 
-    room = null;
-    micTrack = null;
+    session = null;
     listeningActive = false;
-    audioAttached = false;
-    videoAttached = false;
 
     startButton.disabled = false;
     endButton.disabled = true;
@@ -54,8 +44,8 @@ function cleanupUI() {
     setStatus("Sesión detenida.");
 }
 
-async function startSessionOnBackend() {
-    const resp = await fetch(`${API_BASE_URL}/api/start-session`, {
+async function fetchSessionToken() {
+    const resp = await fetch(`${API_BASE_URL}/api/session-token`, {
         method: "POST",
         headers: { "content-type": "application/json", accept: "application/json" },
         body: JSON.stringify({
@@ -75,94 +65,48 @@ async function startSessionOnBackend() {
     }
 
     if (!resp.ok) throw new Error(`start-session failed (${resp.status}): ${JSON.stringify(json)}`);
-    if (!json?.livekit_url || !json?.livekit_client_token) {
-        throw new Error(`start-session missing livekit creds: ${JSON.stringify(json)}`);
+    if (!json?.session_token) {
+        throw new Error(`session-token missing session_token: ${JSON.stringify(json)}`);
     }
 
     return json;
 }
 
-// 🔴 Envía comandos a LiveAvatar (FULL mode) por el topic agent-control
-function sendAgentControl(eventObj) {
-    if (!room) return;
-    const payload = new TextEncoder().encode(JSON.stringify(eventObj));
-    room.localParticipant.publishData(payload, { reliable: true, topic: "agent-control" });
-}
-
 function requestListening(force = false) {
-    if (!room) return;
+    if (!session) return;
     if (listeningActive && !force) return;
     listeningActive = true;
-    sendAgentControl({ event_type: "avatar.start_listening" });
+    session.startListening();
 }
 
-function stopListening() {
-    if (!room) return;
-    if (!listeningActive) return;
-    listeningActive = false;
-    sendAgentControl({ event_type: "avatar.stop_listening" });
-}
-
-function attachAgentResponseDebug(r) {
-    r.on("dataReceived", (payload, participant, kind, topic) => {
-        if (topic !== "agent-response") return;
-
-        try {
-            const text = new TextDecoder().decode(payload);
-            const evt = JSON.parse(text);
-            console.log("[agent-response]", evt);
-
-            if (evt?.event_type === "avatar.speak_started") {
-                setStatus("Avatar hablando…");
-            }
-
-            if (evt?.event_type === "avatar.speak_ended") {
-                setStatus("Escuchando…");
-                requestListening(true);
-            }
-
-            if (evt?.event_type === "user.speak_started") {
-                setStatus("Escuchando…");
-            }
-
-            if (evt?.event_type === "user.speak_ended") {
-                setStatus("Procesando respuesta…");
-                stopListening();
-            }
-        } catch (e) {
-            console.warn("agent-response parse failed:", e);
-        }
-    });
-}
-
-function attachTracks(r) {
-    r.on("trackSubscribed", (track, publication, participant) => {
-        const who = participant?.identity;
-
-        if (track.kind === "video" && !videoAttached) {
-            const stream = new MediaStream([track.mediaStreamTrack]);
-            videoElement.srcObject = stream;
-            videoAttached = true;
-            videoElement.play().catch(() => {});
-            return;
-        }
-
-        if (track.kind === "audio") {
-            if (audioAttached && who !== PREFERRED_AUDIO_PARTICIPANT) return;
-
-            const stream = new MediaStream([track.mediaStreamTrack]);
-            audioElement.muted = false;
-            audioElement.volume = 1;
-            audioElement.srcObject = stream;
-            audioAttached = true;
-
-            audioElement.play().catch(() => {});
-        }
+function attachAgentEvents(s) {
+    s.on(AgentEventsEnum.AVATAR_SPEAK_STARTED, (evt) => {
+        console.log("[agent-response]", evt);
+        setStatus("Avatar hablando…");
     });
 
-    r.on("disconnected", (reason) => {
-        console.log("Desconectado de la sala. reason:", reason);
-        cleanupUI();
+    s.on(AgentEventsEnum.AVATAR_SPEAK_ENDED, (evt) => {
+        console.log("[agent-response]", evt);
+        setStatus("Escuchando…");
+        requestListening(true);
+    });
+
+    s.on(AgentEventsEnum.USER_SPEAK_STARTED, (evt) => {
+        console.log("[agent-response]", evt);
+        setStatus("Escuchando…");
+    });
+
+    s.on(AgentEventsEnum.USER_SPEAK_ENDED, (evt) => {
+        console.log("[agent-response]", evt);
+        setStatus("Procesando respuesta…");
+    });
+
+    s.on(AgentEventsEnum.USER_TRANSCRIPTION, (evt) => {
+        console.log("[agent-response]", evt);
+    });
+
+    s.on(AgentEventsEnum.AVATAR_TRANSCRIPTION, (evt) => {
+        console.log("[agent-response]", evt);
     });
 }
 
@@ -174,21 +118,22 @@ async function initializeAvatarSession() {
         userInput.disabled = true;
         setStatus("Iniciando sesión LiveAvatar…");
 
-        const { livekit_url, livekit_client_token } = await startSessionOnBackend();
+        const { session_token } = await fetchSessionToken();
 
-        room = new Room();
-        attachTracks(room);
-        attachAgentResponseDebug(room);
+        session = new LiveAvatarSession(session_token, { voiceChat: true });
+        attachAgentEvents(session);
 
-        await room.connect(livekit_url, livekit_client_token);
-
-        micTrack = await createLocalAudioTrack({
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
+        session.on(SessionEvent.SESSION_STREAM_READY, () => {
+            session.attach(videoElement);
+            videoElement.play().catch(() => {});
         });
-        await room.localParticipant.publishTrack(micTrack);
 
+        session.on(SessionEvent.SESSION_DISCONNECTED, (reason) => {
+            console.log("Desconectado de la sesión. reason:", reason);
+            cleanupUI();
+        });
+
+        await session.start();
         requestListening(true);
 
         endButton.disabled = false;
@@ -204,13 +149,9 @@ async function initializeAvatarSession() {
 
 async function terminateAvatarSession() {
     try {
-        if (micTrack) {
-            micTrack.stop();
-            micTrack = null;
-        }
-        if (room) {
-            room.disconnect();
-            room = null;
+        if (session) {
+            await session.stop();
+            session = null;
         }
     } finally {
         cleanupUI();
@@ -218,15 +159,12 @@ async function terminateAvatarSession() {
 }
 
 async function handleSendText() {
-    if (!room) return;
+    if (!session) return;
 
     const text = (userInput.value || "").trim();
     if (!text) return;
 
-    sendAgentControl({
-        event_type: "avatar.speak",
-        text,
-    });
+    session.repeat(text);
     setStatus("Avatar hablando…");
     userInput.value = "";
 }
