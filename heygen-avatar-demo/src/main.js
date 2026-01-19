@@ -25,6 +25,7 @@ const statusEl = document.getElementById("status");
 
 let room = null;
 let micTrack = null;
+let listeningActive = false;
 
 let audioAttached = false;
 let videoAttached = false;
@@ -42,6 +43,7 @@ function cleanupUI() {
 
     room = null;
     micTrack = null;
+    listeningActive = false;
     audioAttached = false;
     videoAttached = false;
 
@@ -87,6 +89,20 @@ function sendAgentControl(eventObj) {
     room.localParticipant.publishData(payload, { reliable: true, topic: "agent-control" });
 }
 
+function requestListening(force = false) {
+    if (!room) return;
+    if (listeningActive && !force) return;
+    listeningActive = true;
+    sendAgentControl({ event_type: "avatar.start_listening" });
+}
+
+function stopListening() {
+    if (!room) return;
+    if (!listeningActive) return;
+    listeningActive = false;
+    sendAgentControl({ event_type: "avatar.stop_listening" });
+}
+
 function attachAgentResponseDebug(r) {
     r.on("dataReceived", (payload, participant, kind, topic) => {
         if (topic !== "agent-response") return;
@@ -102,7 +118,16 @@ function attachAgentResponseDebug(r) {
 
             if (evt?.event_type === "avatar.speak_ended") {
                 setStatus("Escuchando…");
-                sendAgentControl({ event_type: "avatar.start_listening" });
+                requestListening(true);
+            }
+
+            if (evt?.event_type === "user.speak_started") {
+                setStatus("Escuchando…");
+            }
+
+            if (evt?.event_type === "user.speak_ended") {
+                setStatus("Procesando respuesta…");
+                stopListening();
             }
         } catch (e) {
             console.warn("agent-response parse failed:", e);
@@ -164,7 +189,7 @@ async function initializeAvatarSession() {
         });
         await room.localParticipant.publishTrack(micTrack);
 
-        sendAgentControl({ event_type: "avatar.start_listening" });
+        requestListening(true);
 
         endButton.disabled = false;
         speakButton.disabled = false;
